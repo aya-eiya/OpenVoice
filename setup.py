@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-setup(name='MyShell-OpenVoice',
+setup(name='gen_voice_model',
       version='0.0.0',
       description='Instant voice cloning by MyShell.',
       long_description=open('README.md').read().strip(),

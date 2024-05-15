@@ -16,10 +16,13 @@ from whisper_timestamped.transcribe import get_audio_tensor, get_vad_segments
 model_size = "medium"
 # Run on GPU with FP16
 model = None
-def split_audio_whisper(audio_path, audio_name, target_dir='processed'):
+def split_audio_whisper(audio_path, audio_name, device, target_dir='processed'):
     global model
+    whisper_supported_devices = ["cuda", "cpu", "auto"]
+    device = device if device in whisper_supported_devices else "cpu"
+    compute_type = "float16" if device != "cpu" else "int8"
     if model is None:
-        model = WhisperModel(model_size, device="cuda", compute_type="float16")
+        model = WhisperModel(model_size, device=device, compute_type=compute_type)
     audio = AudioSegment.from_file(audio_path)
     max_len = len(audio)
 
@@ -126,7 +129,7 @@ def hash_numpy_array(audio_path):
     base64_value = base64.b64encode(hash_value)
     return base64_value.decode('utf-8')[:16].replace('/', '_^')
 
-def get_se(audio_path, vc_model, target_dir='processed', vad=True):
+def get_se(audio_path, vc_model, target_dir='processed', vad=True, device="cuda"):
     device = vc_model.device
     version = vc_model.version
     print("OpenVoice version:", version)
@@ -143,7 +146,7 @@ def get_se(audio_path, vc_model, target_dir='processed', vad=True):
     if vad:
         wavs_folder = split_audio_vad(audio_path, target_dir=target_dir, audio_name=audio_name)
     else:
-        wavs_folder = split_audio_whisper(audio_path, target_dir=target_dir, audio_name=audio_name)
+        wavs_folder = split_audio_whisper(audio_path, device=device, target_dir=target_dir, audio_name=audio_name)
     
     audio_segs = glob(f'{wavs_folder}/*.wav')
     if len(audio_segs) == 0:

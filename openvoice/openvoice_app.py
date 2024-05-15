@@ -14,7 +14,7 @@ args = parser.parse_args()
 en_ckpt_base = 'checkpoints/base_speakers/EN'
 zh_ckpt_base = 'checkpoints/base_speakers/ZH'
 ckpt_converter = 'checkpoints/converter'
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
 output_dir = 'outputs'
 os.makedirs(output_dir, exist_ok=True)
 
@@ -115,7 +115,7 @@ def predict(prompt, style, audio_file_pth, agree):
     
     # note diffusion_conditioning not used on hifigan (default mode), it will be empty but need to pass it to model.inference
     try:
-        target_se, audio_name = se_extractor.get_se(speaker_wav, tone_color_converter, target_dir='processed', vad=True)
+        target_se, audio_name = se_extractor.get_se(speaker_wav, tone_color_converter, target_dir='processed', vad=True, device=device)
     except Exception as e:
         text_hint += f"[ERROR] Get target tone color error {str(e)} \n"
         gr.Warning(
