@@ -29,7 +29,7 @@ def split_audio_whisper(audio_path, audio_name, device, target_dir='processed'):
     target_folder = os.path.join(target_dir, audio_name)
     
     segments, info = model.transcribe(audio_path, beam_size=5, word_timestamps=True)
-    segments = list(segments)    
+    segments = list(segments)
 
     # create directory
     os.makedirs(target_folder, exist_ok=True)
