@@ -8,7 +8,7 @@ langid==1.1.6
 librosa==0.11.0
 melotts @ git+https://github.com/aya-eiya/MeloTTS.git
 numba==0.61.2
-numpy==2.2.6
+numpy==2.4.6
 openai-whisper @ git+https://github.com/openai/whisper.git
 openai==1.88.0
 pydub==0.25.1
