@@ -14,9 +14,11 @@ from openvoice.models import SynthesizerTrn
 class OpenVoiceBaseClass(object):
     def __init__(self, 
                 config_path, 
-                device='cuda:0'):
+                device='cpu'):
         if 'cuda' in device:
             assert torch.cuda.is_available()
+        if 'mps' in device:
+            assert torch.backends.mps.is_available() 
 
         hps = utils.get_hparams_from_file(config_path)
 
@@ -153,7 +155,7 @@ class ToneColorConverter(OpenVoiceBaseClass):
             spec_lengths = torch.LongTensor([spec.size(-1)]).to(self.device)
             audio = self.model.voice_conversion(spec, spec_lengths, sid_src=src_se, sid_tgt=tgt_se, tau=tau)[0][
                         0, 0].data.cpu().float().numpy()
-            audio = self.add_watermark(audio, message)
+            # audio = self.add_watermark(audio, message)
             if output_path is None:
                 return audio
             else:
